@@ -12,10 +12,8 @@ public class SeckillExecution {
     //对秒杀状态的描述
     private String stateInfo;
 
-
     //秒杀成功的对象
     private SuccessSeckilled successSeckilled;
-
 
     //秒杀成功时返回全部信息
     public SeckillExecution(long seckillId, SeckillStateEnum stateEnum, SuccessSeckilled successSeckilled) {
@@ -26,10 +24,10 @@ public class SeckillExecution {
     }
 
     //秒杀失败
-    public SeckillExecution(long seckillId, byte state, String stateInfo) {
+    public SeckillExecution(long seckillId,SeckillStateEnum stateEnum) {
         this.seckillId = seckillId;
-        this.state = state;
-        this.stateInfo = stateInfo;
+        this.state = stateEnum.getState();
+        this.stateInfo =stateEnum.getStateInfo();
     }
 
     public long getSeckillId() {

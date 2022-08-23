@@ -1,6 +1,8 @@
 
 package com.service.impl;
 import com.dto.Exposer;
+import com.dto.SeckillExecution;
+import com.enums.SeckillStateEnum;
 import com.exeception.ExecuteSeckillException;
 import com.exeception.RepeatSeckillException;
 import com.exeception.SeckillCloseException;
@@ -67,17 +69,15 @@ public class SeckillServiceImpl implements SeckillService {
         //秒杀开启
         return new Exposer(true, this.getMd5(seckillId), seckillId);
     }
-
     //获取url的md5加密值
     public String getMd5(Long seckillId) {
         String base = seckillId + "/" + salt;
         String md5 = DigestUtils.md5DigestAsHex(base.getBytes());
         return md5;
     }
-
     @Override
     @Transactional
-    public void executeSeckill(Long seckillId, Long userPhone, String md5) throws ExecuteSeckillException, SeckillCloseException, RepeatSeckillException {
+    public SeckillExecution executeSeckill(Long seckillId, Long userPhone, String md5) throws ExecuteSeckillException, SeckillCloseException, RepeatSeckillException {
         try {
             //访问秒杀接口的渠道错误
             if (seckillId == null || !getMd5(seckillId).equals(md5)) {
@@ -103,6 +103,6 @@ public class SeckillServiceImpl implements SeckillService {
         } catch (Exception e) {
             throw new ExecuteSeckillException("seckill inner exception:" + e.getMessage());
         }
-
+        return new SeckillExecution(seckillId, SeckillStateEnum.SUCCESS,successSeckilledMapper.queryByIdWithSeckill(seckillId,userPhone));
     }
 }

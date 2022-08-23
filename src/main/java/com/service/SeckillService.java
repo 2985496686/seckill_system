@@ -1,6 +1,7 @@
 package com.service;
 
 import com.dto.Exposer;
+import com.dto.SeckillExecution;
 import com.exeception.ExecuteSeckillException;
 import com.exeception.RepeatSeckillException;
 import com.exeception.SeckillCloseException;
@@ -40,6 +41,6 @@ public interface SeckillService {
      * @throws SeckillCloseException
      * @throws RepeatSeckillException
      */
-    void executeSeckill(Long seckillId,Long userPhone,String md5)
+    SeckillExecution executeSeckill(Long seckillId, Long userPhone, String md5)
             throws ExecuteSeckillException, SeckillCloseException, RepeatSeckillException;
 }
