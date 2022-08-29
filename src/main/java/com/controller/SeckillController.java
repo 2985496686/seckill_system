@@ -13,6 +13,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -31,7 +34,7 @@ public class SeckillController {
     public String getSeckillList(Model model) {
         List<Seckill> seckillList = seckillService.getSeckillList();
         model.addAttribute("seckillList", seckillList);
-        return "index";
+        return "list";
     }
 
     /**
@@ -86,7 +89,7 @@ public class SeckillController {
 
     @ResponseBody
     @RequestMapping(value = "/time",
-            method = RequestMethod.POST,
+            method = RequestMethod.GET,
             produces = {"application/json;charset=UTF-8"})
     public SeckillResult<Long> time(){
         return new SeckillResult<Long>(true,new Date().getTime());

@@ -29,7 +29,7 @@ public class Seckill {
     }
 
     public void setSeckillId(Long seckillId) {
-        seckillId = seckillId;
+        this.seckillId = seckillId;
     }
 
     public void setName(String name) {
@@ -53,6 +53,7 @@ public class Seckill {
     }
 
     public Long getSeckillId() {
+        System.out.println(this);
         return seckillId;
     }
 
