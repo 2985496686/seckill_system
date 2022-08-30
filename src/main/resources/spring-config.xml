@@ -41,4 +41,10 @@
 
     <!--开启事务管理的注解驱动-->
     <tx:annotation-driven transaction-manager="dataSourceTransactionManager"/>
+
+    <!--配置RedisDAO-->
+    <bean id="redisDao" class="com.DAO.RedisDao">
+        <constructor-arg index="0" value="localhost"/>
+        <constructor-arg index="1" value="6379"/>
+    </bean>
 </beans>

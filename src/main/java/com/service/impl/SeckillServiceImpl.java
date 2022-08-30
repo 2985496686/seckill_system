@@ -1,5 +1,6 @@
 
 package com.service.impl;
+import com.DAO.RedisDao;
 import com.dto.Exposer;
 import com.dto.SeckillExecution;
 import com.enums.SeckillStateEnum;
@@ -30,6 +31,9 @@ public class SeckillServiceImpl implements SeckillService {
     @Autowired
     private SeckillMapper seckillMapper;
 
+    @Autowired
+    private RedisDao redisDao;
+
     public SeckillMapper getSeckillMapper() {
         return seckillMapper;
     }
@@ -58,7 +62,13 @@ public class SeckillServiceImpl implements SeckillService {
             return new Exposer(false, seckillId);
         }
         //获取秒杀商品的相关信息
-        Seckill seckill = seckillMapper.queryById(seckillId);
+        Seckill seckill = redisDao.getSeckill(seckillId);
+        //Redis缓存中没有该对象
+        if(seckill == null){
+            seckill = seckillMapper.queryById(seckillId);
+            //存入redis缓存
+            redisDao.putSeckill(seckill);
+        }
         long startTime = seckill.getStartTime().getTime();
         long endTime = seckill.getEndTime().getTime();
         long nowTime = new Date().getTime();
