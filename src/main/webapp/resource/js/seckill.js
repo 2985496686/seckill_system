@@ -8,8 +8,11 @@ var seckill = {
         exposer:function (seckillId) {
             return "/seckill_system/seckill/" + seckillId +"/exposer";
         },
-        excute:function (seckillId,md5) {
-            return "/seckill_system/seckill/" + seckillId + "/" + md5 + "/excute";
+        execute:function (seckillId,md5) {
+            return "/seckill_system/seckill/" + seckillId + "/" + md5 + "/execute";
+        },
+        excuteByProcedure:d=function (seckillId, md5) {
+            return "/seckill_system/seckill/" + seckillId + "/" + md5 + "/executeByProcedure";
         }
     },
     //验证手机号存在，并且有效
@@ -50,7 +53,7 @@ var seckill = {
                         //禁用按钮
                         $(this).addClass("disabled");
                         //执行秒杀
-                        $.post(seckill.url.excute(seckillId,exposer['md5']),{},function (result) {
+                        $.post(seckill.url.excuteByProcedure(seckillId,exposer['md5']),{},function (result) {
                             if(result && result['success']){
                                 var execution = result['data'];
                                 var stateInfo = execution['stateInfo'];

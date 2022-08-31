@@ -13,6 +13,7 @@ public interface SeckillService {
 
     /**
      * 返回所有秒杀的商品列表
+     *
      * @return
      */
     List<Seckill> getSeckillList();
@@ -20,6 +21,7 @@ public interface SeckillService {
 
     /**
      * 根据id查询某一个商品的秒杀信息
+     *
      * @return
      */
     Seckill getSeckillById(Long seckillId);
@@ -27,13 +29,13 @@ public interface SeckillService {
 
     /**
      * 若执行秒杀暴露秒杀接口，不执行秒杀返回系统当前时间，以及秒杀开始和结束的时间
+     *
      * @param seckillId
      */
     Exposer exposeSeckillUrl(Long seckillId);
 
 
     /**
-     *
      * @param seckillId
      * @param userPhone
      * @param md5
@@ -43,4 +45,6 @@ public interface SeckillService {
      */
     SeckillExecution executeSeckill(Long seckillId, Long userPhone, String md5)
             throws ExecuteSeckillException, SeckillCloseException, RepeatSeckillException;
+
+    SeckillExecution executeSeckillByProcedure(Long seckillId, Long userPhone, String md5);
 }

@@ -1,0 +1,34 @@
+delimiter $$
+create procedure `seckill`.`execute_seckill`
+  (in p_user_phone bigint,in p_seckill_id bigint,in p_seckil_time timestamp ,out result int)
+  begin
+    declare insert_count int default 0;
+    /*开启事务机制*/
+    start transaction;
+    insert ignore into success_seckilled(seckill_id,user_phone,create_time)
+                                 values (p_seckill_id,p_user_phone,p_seckil_time);
+    select row_count() into insert_count;
+    if(insert_count = 0) then
+      rollback ;
+      set result = -1;
+    elseif (insert_count < 0) then
+      rollback ;
+      set result = -2;
+    else
+      update seckill
+      set number = number - 1
+      where seckil_id = p_seckill_id and number > 0 and p_seckil_time > start_time and p_seckil_time < end_time;
+      select row_count into insert_count;
+      if(insert_count = 0)then
+        rollback ;
+        set result = -1;
+      elseif (insert_count < 0) then
+        rollback ;
+        set result = -2;
+      else
+        commit ;
+        set result = 1;
+      end if;
+  end if ;
+end $$
+    delimiter ;

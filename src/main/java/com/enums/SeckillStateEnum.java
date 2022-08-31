@@ -1,5 +1,6 @@
 package com.enums;
 
+
 public enum SeckillStateEnum {
     SUCCESS(1,"秒杀成功"),
     END(0,"秒杀结束"),
@@ -33,4 +34,12 @@ public enum SeckillStateEnum {
         this.stateInfo = stateInfo;
     }
 
+    public static SeckillStateEnum stateOf(int state){
+        for(SeckillStateEnum stateEnum:SeckillStateEnum.values()){
+            if(stateEnum.state == state){
+                return stateEnum;
+            }
+        }
+        return null;
+    }
 }

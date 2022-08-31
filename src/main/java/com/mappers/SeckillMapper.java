@@ -5,6 +5,7 @@ import org.apache.ibatis.annotations.Param;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 public interface SeckillMapper {
 
@@ -32,4 +33,9 @@ public interface SeckillMapper {
      */
     List<Seckill> queryAll(@Param("offset") int offset , @Param("limit") int limit);
 
+    /**
+     *直接数据库中进行秒杀操作
+     * @param paramMap 参数集合
+     */
+    void seckillByProcedure(Map<String,Object> paramMap);
 }

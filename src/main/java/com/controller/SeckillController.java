@@ -65,7 +65,7 @@ public class SeckillController {
     }
 
     @ResponseBody
-    @RequestMapping(value = "/{seckillId}/{md5}/excute",
+    @RequestMapping(value = "/{seckillId}/{md5}/execute",
             method = RequestMethod.POST,
             produces = {"application/json;charset=UTF-8"})
     public SeckillResult<SeckillExecution> execute(@PathVariable Long seckillId,
@@ -93,5 +93,21 @@ public class SeckillController {
             produces = {"application/json;charset=UTF-8"})
     public SeckillResult<Long> time(){
         return new SeckillResult<Long>(true,new Date().getTime());
+    }
+
+
+    @ResponseBody
+    @RequestMapping(value = "/{seckillId}/{md5}/executeByProcedure",
+            method = RequestMethod.POST,
+            produces = {"application/json;charset=UTF-8"})
+    public SeckillResult<SeckillExecution> executeByProcedure(@PathVariable Long seckillId,
+                                                   @CookieValue(value = "userPhone",required = false) Long userPhone,
+                                                   @PathVariable String md5) {
+        try{
+            SeckillExecution seckillExecution = seckillService.executeSeckillByProcedure(seckillId, userPhone, md5);
+            return new SeckillResult<SeckillExecution>(true,seckillExecution);
+        }catch (Exception e){
+            return new SeckillResult<SeckillExecution>(false,new SeckillExecution(seckillId,SeckillStateEnum.INNE_RERROR));
+        }
     }
 }

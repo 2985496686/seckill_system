@@ -10,6 +10,7 @@ import com.exeception.SeckillCloseException;
 import com.mappers.SeckillMapper;
 import com.mappers.SuccessSeckilledMapper;
 import com.pojo.Seckill;
+import com.pojo.SuccessSeckilled;
 import com.service.SeckillService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,7 +20,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.DigestUtils;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class SeckillServiceImpl implements SeckillService {
@@ -93,6 +96,12 @@ public class SeckillServiceImpl implements SeckillService {
             if (seckillId == null || !getMd5(seckillId).equals(md5)) {
                 throw new ExecuteSeckillException("seckillUrl rewrite");
             }
+            //插入购买明细
+            int insertNumber = successSeckilledMapper.insertSuccessSeckilled(seckillId, userPhone);
+            //重复秒杀
+            if (insertNumber <= 0) {
+                throw new RepeatSeckillException("repeat  seckill");
+            }
             //执行秒杀：减少商品 + 插入购买明细
             //减少商品
             //获取秒杀时间
@@ -102,12 +111,6 @@ public class SeckillServiceImpl implements SeckillService {
                 //秒杀时间未开始或者已经结束或者商品数量不足等原因导致秒杀关闭
                 throw new SeckillCloseException("seckill close");
             }
-            //插入购买明细
-            int insertNumber = successSeckilledMapper.insertSuccessSeckilled(seckillId, userPhone);
-            //重复秒杀
-            if (insertNumber <= 0) {
-                throw new RepeatSeckillException("repeat  seckill");
-            }
         } catch (SeckillCloseException | RepeatSeckillException s) {
             throw s;
         } catch (Exception e) {
@@ -115,4 +118,29 @@ public class SeckillServiceImpl implements SeckillService {
         }
         return new SeckillExecution(seckillId, SeckillStateEnum.SUCCESS,successSeckilledMapper.queryByIdWithSeckill(seckillId,userPhone));
     }
+
+
+    public SeckillExecution executeSeckillByProcedure(Long seckillId, Long userPhone, String md5){
+        if(md5 == null || !md5.equals(getMd5(seckillId))){
+            return new SeckillExecution(seckillId,SeckillStateEnum.REWRITE);
+        }
+        try{
+            Map<String,Object> paramMap = new HashMap<>();
+            paramMap.put("seckillId",seckillId);
+            paramMap.put("userPhone",userPhone);
+            paramMap.put("seckillTime",new Date());
+            paramMap.put("result",null);
+            seckillMapper.seckillByProcedure(paramMap);
+            int result = (int)paramMap.get("result");
+            if(result == 1){
+                SuccessSeckilled sk = successSeckilledMapper.queryByIdWithSeckill(seckillId,userPhone);
+                return new SeckillExecution(seckillId,SeckillStateEnum.SUCCESS,sk);
+            }else{
+                return new SeckillExecution(seckillId,SeckillStateEnum.stateOf(result));
+            }
+        }catch (Exception e){
+            return new SeckillExecution(seckillId,SeckillStateEnum.INNE_RERROR);
+        }
+    }
 }
+
